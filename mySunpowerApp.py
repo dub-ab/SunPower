@@ -7,7 +7,6 @@ from time import strftime
 import smtplib
 from email.message import EmailMessage
 
-
 static_time = 0        # the base time
 length_of_timer = 60   # in seconds 
 kounter = 0            # keep track of the number of times through the length_of_timer loop
@@ -247,29 +246,31 @@ print(f"""
 """ )
 
 try:
-    while True:      
+    while True:
+
+        current_time = time.time()     
 
         try:   
             results = poll_the_PVS()
-            if results != None:
-                my_connection = influxdb_connect('sunpower')   
-                my_connection.write_points(results)
+            my_connection = influxdb_connect('sunpower')   
+            my_connection.write_points(results)
         except InterruptedError as e:
             print(f"error code {e}")
-        except Exception as e:
-            current_time = time.time()
-            print(f"at {human_time_format(current_time)} something went wrong. {str(e)}\n")
+        except:
+            print(f"at {human_time_format(current_time)} something went wrong.")
         finally:
             my_connection.close()
 
-        kounter += 1
-        if kounter == (3600 / length_of_timer):
-            # print("one hour has elapsed. time to send the email")
-            # TODO must decide if the database has been down for an hour or
-            # bad inverters being reported.
-            kounter = 0
+            kounter += 1
+            if kounter == (3600 / length_of_timer):
+                # print("one hour has elapsed. time to send the email")
+                # TODO must decide if the database has been down for an hour or
+                # bad inverters being reported.
+                kounter = 0
 
-        time.sleep(length_of_timer)
+
+            #print(f"sleeping for {length_of_timer} seconds... ")
+            time.sleep(length_of_timer)
 
 except KeyboardInterrupt as e:
     print(f"""
