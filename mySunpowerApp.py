@@ -7,16 +7,7 @@ from time import strftime
 import smtplib
 from email.message import EmailMessage
 
-static_time = 0        # the base time 
-"""
-    LOGIC OF TIMERS 
-    1) upon initialization, start a timer.
-    2) measure a "static point" once
-    3) contineously measure "current time"
-    4) difference between "current time" and "static point" is Length Of Timer
-    5) if current_time - static_point > length_of_timer:
-        #timer condition is met
-"""
+
 static_time = 0        # the base time
 length_of_timer = 60   # in seconds 
 kounter = 0            # keep track of the number of times through the length_of_timer loop
@@ -53,7 +44,6 @@ def send_report(report_object):
             smtp.send_message(report_object)
     except smtplib.SMTPException as e:
         print(f"a SMTP protocol exception occurred!\n {str(e)}\n")
-
 
 def human_time_format(c_time):
     """
@@ -280,42 +270,6 @@ try:
             kounter = 0
 
         time.sleep(length_of_timer)
-
-print(f"""
-    +++
-        the initial current epoch time is: {static_time}
-        thats: {human_time_format(static_time)} for humans.
-        the sunpower monitor is running. time to poll the PVS
-    --> use 'ctrl+c' to exit
-    +++
-""" )
-
-try:
-    while True:
-
-        current_time = time.time()     
-
-        try:   
-            results = poll_the_PVS()
-            my_connection = influxdb_connect('sunpower')   
-            my_connection.write_points(results)
-        except InterruptedError as e:
-            print(f"error code {e}")
-        except:
-            print(f"at {human_time_format(current_time)} something went wrong.")
-        finally:
-            my_connection.close()
-
-            kounter += 1
-            if kounter == (3600 / length_of_timer):
-                # print("one hour has elapsed. time to send the email")
-                # TODO must decide if the database has been down for an hour or
-                # bad inverters being reported.
-                kounter = 0
-
-
-            #print(f"sleeping for {length_of_timer} seconds... ")
-            time.sleep(length_of_timer)
 
 except KeyboardInterrupt as e:
     print(f"""
