@@ -109,7 +109,7 @@ def poll_the_PVS():
                             'device_type' : device["DEVICE_TYPE"]
                         },
                         'fields' : {
-                            'dl_uptime' : float(device["dl_uptime"]),              # number of seconds the system has been running
+                            'dl_uptime' : float(device["dl_uptime"]),              # some number of units the system has been running
                             'dl_cpu_load' : float(device["dl_cpu_load"]),          # 1-minute load average
                             'dl_mem_used' : float(device["dl_mem_used"]),          # amount of memory used, in KiB (assumed 1GiB of RAM)
                             'dl_flash_avail' : float(device["dl_flash_avail"]),    # amount of free space, in KiB (assumed 1GiB of storage)
